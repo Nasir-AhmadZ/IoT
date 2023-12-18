@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>About</title>
+    <link rel="stylesheet"href="style.css"><!--External CSS-->
+    <!--Internal CSS-->
+    <style>
+        
+    </style>
+</head>
+    
+<body>
+<div class ="AboutMain">
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="IoT_Server.html">Home</a><!--Add details of what the project will be about-->
+        <a href="http://192.168.134.194/">Video</a><!--Replace the link with the camera server-->
+        <a href="Contact.html">Contacts</a>
+    </div>
+    
+    <div class="main-content" style="background-color:rgb(119,221,119); width:100%; float:left; border: 5px solid green;">
+        <span onclick="openNav()" >Menu</span>
+        <div id="About"> 
+            <h3>About</h3>
+            <p>This is an IoT Project based around home security, The goal of my product is to provide a detterent against intruders and/or the feeling of security.</p>
+            
+        </div>
+    </div>
+    <h2 class="center">Architecture Diagram</h2>
+    <img src="Architecture Diagram.png" alt="Architecure Diagram" class="center">
+    <div class="main-content" style="background-color:rgb(119,221,119); width:100%; float:left; border: 5px solid green;">
+        <p>When completed there will be an ESP32 cam that will detect your face and if your face is in the database then you will be able to enter. If your face is not in the database, there will be an lcd screen that will promt the user to enter a pin,
+            if you happen to get the pin wrong, then you will be sprayed with water for every time you get the pin wrong.
+        </p>
+    </div>
+</div>
+        <script src="IoT.js"></script>
+</body>
+</html>
