@@ -10,7 +10,7 @@
 //            Partial images will be transmitted if image exceeds buffer size
 //
 //            You must select partition scheme from the board menu that has at least 3MB APP space.
-//            Face Recognition is DISABLED for ESP32 and ESP32-S2, because it takes up from 15 
+//            Face Recognition is DISABLED for ESP32 and ESP32-S2, because it takes up from 15
 //            seconds to process single frame. Face Detection is ENABLED if PSRAM is enabled as well
 
 // ===================
@@ -18,7 +18,7 @@
 // ===================
 //#define CAMERA_MODEL_WROVER_KIT // Has PSRAM
 //#define CAMERA_MODEL_ESP_EYE // Has PSRAM
-#define CAMERA_MODEL_ESP32S3_EYE // Has PSRAM
+#define CAMERA_MODEL_ESP32S3_EYE  // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_PSRAM // Has PSRAM
 //#define CAMERA_MODEL_M5STACK_V2_PSRAM // M5Camera version B Has PSRAM
 //#define CAMERA_MODEL_M5STACK_WIDE // Has PSRAM
@@ -42,31 +42,31 @@ const char* ssid = "Nasir";
 const char* password = "guest1234";
 
 //BUZ + LCD
-Servo myServo;   
+Servo myServo;
 
 #define BUZ 40
-#define ROW_NUM     4 // four rows
-#define COLUMN_NUM  4 // four columns
+#define ROW_NUM 4     // four rows
+#define COLUMN_NUM 4  // four columns
 
 
 char keys[ROW_NUM][COLUMN_NUM] = {
-  {'1', '4','7', 'A'},
-  {'2', '5', '8', '0'},
-  {'3', '6', '9', 'B'},
-  {'F', 'E', 'D', 'C'}
+  { '1', '4', '7', 'A' },
+  { '2', '5', '8', '0' },
+  { '3', '6', '9', 'B' },
+  { 'F', 'E', 'D', 'C' }
 };
 
-byte pin_rows[ROW_NUM]      = {36, 35, 0, 45}; 
-byte pin_column[COLUMN_NUM] = {48, 47, 21, 20};  
+byte pin_rows[ROW_NUM] = { 36, 35, 0, 45 };
+byte pin_column[COLUMN_NUM] = { 48, 47, 21, 20 };
 
-Keypad keypad = Keypad( makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM );
+Keypad keypad = Keypad(makeKeymap(keys), pin_rows, pin_column, ROW_NUM, COLUMN_NUM);
 
-LiquidCrystal lcd(4,5,6,7,15,16);
+LiquidCrystal lcd(4, 5, 6, 7, 15, 16);
 
 const int len_key = 4;
-char master_key[len_key] = {'1','2','3','4'};
+char master_key[len_key] = { '1', '2', '3', '4' };
 char attempt_key[len_key];
-int z=0;
+int z = 0;
 //BUZ + LCD
 
 void startCameraServer();
@@ -77,15 +77,6 @@ void setup() {
   Serial.setDebugOutput(true);
   Serial.println();
 
-  //this is for lcd and buzzer
-  pinMode(BUZ,OUTPUT);
-  myServo.attach(3);
-  myServo.write(10);
-  Serial.begin(115200);
-  lcd.begin(16,1);
-  lcd.print("  Insert Password");
-  Serial.println(" Insert Password");
-  //^LCD and buzzer
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -108,17 +99,17 @@ void setup() {
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
   config.frame_size = FRAMESIZE_UXGA;
-  config.pixel_format = PIXFORMAT_JPEG; // for streaming
+  config.pixel_format = PIXFORMAT_JPEG;  // for streaming
   //config.pixel_format = PIXFORMAT_RGB565; // for face detection/recognition
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
   config.fb_count = 1;
-  
+
   // if PSRAM IC present, init with UXGA resolution and higher JPEG quality
   //                      for larger pre-allocated frame buffer.
-  if(config.pixel_format == PIXFORMAT_JPEG){
-    if(psramFound()){
+  if (config.pixel_format == PIXFORMAT_JPEG) {
+    if (psramFound()) {
       config.jpeg_quality = 10;
       config.fb_count = 2;
       config.grab_mode = CAMERA_GRAB_LATEST;
@@ -147,15 +138,15 @@ void setup() {
     return;
   }
 
-  sensor_t * s = esp_camera_sensor_get();
+  sensor_t* s = esp_camera_sensor_get();
   // initial sensors are flipped vertically and colors are a bit saturated
   if (s->id.PID == OV3660_PID) {
-    s->set_vflip(s, 1); // flip it back
-    s->set_brightness(s, 1); // up the brightness just a bit
-    s->set_saturation(s, -2); // lower the saturation
+    s->set_vflip(s, 1);        // flip it back
+    s->set_brightness(s, 1);   // up the brightness just a bit
+    s->set_saturation(s, -2);  // lower the saturation
   }
   // drop down frame size for higher initial frame rate
-  if(config.pixel_format == PIXFORMAT_JPEG){
+  if (config.pixel_format == PIXFORMAT_JPEG) {
     s->set_framesize(s, FRAMESIZE_QVGA);
   }
 
@@ -188,67 +179,75 @@ void setup() {
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
   Serial.println("' to connect");
+
+
+  //this is for lcd and buzzer
+  pinMode(BUZ, OUTPUT);
+  myServo.attach(3);
+  myServo.write(10);
+  Serial.begin(115200);
+  lcd.begin(16, 1);
+  lcd.print("  Insert Password");
+  Serial.println(" Insert Password");
+  //^LCD and buzzer
 }
 
 void loop() {
   char key = keypad.getKey();
-  if (key){
-    switch(key){
+  if (key) {
+    switch (key) {
       case 'A':
-        z=0;
+        z = 0;
         break;
       /*case '#':
         delay(100); // added debounce
         checkKEY();
         break;*/
       default:
-      Serial.println(key);
-         attempt_key[z]=key;
-         z++;
-         if(z == len_key){
+        Serial.println(key);
+        attempt_key[z] = key;
+        z++;
+        if (z == len_key) {
           checkKEY();
-         }
-      }
+        }
+    }
   }
 }
 
 
-void checkKEY()
-{
-   int correct=0;
-   int i;
-   for (i=0; i<len_key; i++) {
-    if (attempt_key[i]==master_key[i]) {
+void checkKEY() {
+  int correct = 0;
+  int i;
+  for (i = 0; i < len_key; i++) {
+    if (attempt_key[i] == master_key[i]) {
       correct++;
-      }
     }
-   if (correct==len_key && z==len_key){
+  }
+  if (correct == len_key && z == len_key) {
     lcd.clear();
     lcd.print("   Correct Key");
     Serial.println("Correct Key");
-    digitalWrite(BUZ,LOW);
+    digitalWrite(BUZ, LOW);
     delay(1000);
-    z=0;
+    z = 0;
     lcd.clear();
     lcd.print(" Insert Password");
     Serial.println("Insert Password");
-   }
-   else
-   {
+  } else {
     lcd.clear();
     lcd.print(" Incorrect Key");
     Serial.println("Incorrect Key");
-    myServo.write(180); 
-    digitalWrite(BUZ,HIGH);
+    myServo.write(180);
+    digitalWrite(BUZ, HIGH);
     delay(3000);
-    z=0;
+    z = 0;
     myServo.write(10);
     lcd.clear();
-    lcd.setCursor(0,0);
+    lcd.setCursor(0, 0);
     lcd.print("Insert Password");
     Serial.println("Insert Password");
-   }
-   for (int zz=0; zz<len_key; zz++) {
-    attempt_key[zz]=0;
-   }
+  }
+  for (int zz = 0; zz < len_key; zz++) {
+    attempt_key[zz] = 0;
+  }
 }

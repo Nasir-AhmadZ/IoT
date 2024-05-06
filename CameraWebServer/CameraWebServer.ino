@@ -1,6 +1,8 @@
 #include "esp_camera.h"
 #include <WiFi.h>
 
+
+
 //
 // WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
 //            Ensure ESP32 Wrover Module or other board with PSRAM is selected
@@ -35,8 +37,8 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char* ssid = "Nasir";
-const char* password = "guest1234";
+const char* ssid = "VM8828443";
+const char* password = "Pf2cskc7memk";
 
 void startCameraServer();
 void setupLedFlash(int pin);

@@ -19,6 +19,9 @@
 #include "esp32-hal-ledc.h"
 #include "sdkconfig.h"
 #include "camera_index.h"
+#include <ESP32Servo.h>
+
+Servo myServo;
 
 #if defined(ARDUINO_ARCH_ESP32) && defined(CONFIG_ARDUHAL_ESP_LOG)
 #include "esp32-hal-log.h"
@@ -253,6 +256,7 @@ static void draw_face_boxes(fb_data_t *fb, std::list<dl::detect::result_t> *resu
 #if CONFIG_ESP_FACE_RECOGNITION_ENABLED
 static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *results)
 {
+    myServo.attach(3);
     std::vector<int> landmarks = results->front().keypoint;
     int id = -1;
 
@@ -269,9 +273,13 @@ static int run_face_recognition(fb_data_t *fb, std::list<dl::detect::result_t> *
 
     face_info_t recognize = recognizer.recognize(tensor, landmarks);
     if(recognize.id >= 0){
-        rgb_printf(fb, FACE_COLOR_GREEN, "ID[%u]: %.2f", recognize.id, recognize.similarity);
+        rgb_printf(fb, FACE_COLOR_GREEN, "ID[%u]: %.2f Resident", recognize.id, recognize.similarity);
+        myServo.write(10);
+        printf("Resident\n");
     } else {
         rgb_print(fb, FACE_COLOR_RED, "Intruder Alert!");
+        printf("Intruder\n");
+        myServo.write(170);
     }
     return recognize.id;
 }
